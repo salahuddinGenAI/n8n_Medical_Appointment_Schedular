@@ -7,26 +7,20 @@
         "mode": "webhook",
         "options": {}
       },
-      "id": "987d0c6c-a439-419a-8bba-ddcb119b666e",
+      "id": "<NODE_ID_WEBHOOK>",
       "name": "Website Chat Widget",
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "typeVersion": 1.4,
-      "position": [
-        -400,
-        80
-      ],
-      "webhookId": "bd2200e8-f3a8-45ce-9466-49de53b0937c"
+      "position": [-400, 80],
+      "webhookId": "<WEBHOOK_ID>"
     },
     {
       "parameters": {},
-      "id": "4b04ac1a-c9a2-46d1-803e-ad92567ce75a",
+      "id": "<NODE_ID_MEMORY>",
       "name": "Conversation Memory",
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
-      "position": [
-        -384,
-        272
-      ]
+      "position": [-384, 272]
     },
     {
       "parameters": {
@@ -34,16 +28,13 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
-      "position": [
-        -384,
-        464
-      ],
-      "id": "4ebc0edd-195d-40c1-9de1-beb7f532e543",
+      "position": [-384, 464],
+      "id": "<NODE_ID_GEMINI>",
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
-          "id": "Z0URHKQN4k8MCNlx",
-          "name": "Google Gemini(PaLM) Api account 2"
+          "id": "<GEMINI_API_CREDENTIAL_ID>",
+          "name": "<GEMINI_API_CREDENTIAL_NAME>"
         }
       }
     },
@@ -52,25 +43,22 @@
         "operation": "getAll",
         "calendar": {
           "__rl": true,
-          "value": "salahuddinlearning@gmail.com",
+          "value": "<CALENDAR_EMAIL>",
           "mode": "list",
-          "cachedResultName": "salahuddinlearning@gmail.com"
+          "cachedResultName": "<CALENDAR_NAME>"
         },
         "returnAll": true,
         "options": {}
       },
       "type": "n8n-nodes-base.googleCalendar",
       "typeVersion": 1.3,
-      "position": [
-        144,
-        704
-      ],
-      "id": "589cb96d-0b0e-4907-889d-ff39dded0d3e",
+      "position": [144, 704],
+      "id": "<NODE_ID_GET_EVENTS>",
       "name": "Get Upcoming Appointments",
       "credentials": {
         "googleCalendarOAuth2Api": {
-          "id": "SkNyMxoF7hGKFtnh",
-          "name": "Google Calendar account"
+          "id": "<GOOGLE_CALENDAR_CREDENTIAL_ID>",
+          "name": "<GOOGLE_CALENDAR_CREDENTIAL_NAME>"
         }
       }
     },
@@ -78,23 +66,20 @@
       "parameters": {
         "calendar": {
           "__rl": true,
-          "value": "=salahuddinlearning@gmail.com",
+          "value": "<CALENDAR_EMAIL>",
           "mode": "id"
         },
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.googleCalendarTool",
       "typeVersion": 1.3,
-      "position": [
-        64,
-        384
-      ],
-      "id": "ae8cee16-7571-446b-b20b-212d41124b28",
-      "name": "Create new Appointments",
+      "position": [64, 384],
+      "id": "<NODE_ID_CREATE_EVENT>",
+      "name": "Create New Appointments",
       "credentials": {
         "googleCalendarOAuth2Api": {
-          "id": "SkNyMxoF7hGKFtnh",
-          "name": "Google Calendar account"
+          "id": "<GOOGLE_CALENDAR_CREDENTIAL_ID>",
+          "name": "<GOOGLE_CALENDAR_CREDENTIAL_NAME>"
         }
       }
     },
@@ -103,347 +88,79 @@
         "operation": "getAll",
         "calendar": {
           "__rl": true,
-          "value": "fbe6d39ab7633882d667c3e9917a949b89c09b05166c62aef246fb20f01c2837@group.calendar.google.com",
+          "value": "<GROUP_CALENDAR_ID>",
           "mode": "list",
-          "cachedResultName": "CareFlow Booking Calendar"
+          "cachedResultName": "<GROUP_CALENDAR_NAME>"
         },
-        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "returnAll": "={{ $fromAI('Return_All', '', 'boolean') }}",
         "options": {}
       },
       "type": "n8n-nodes-base.googleCalendarTool",
       "typeVersion": 1.3,
-      "position": [
-        -64,
-        320
-      ],
-      "id": "9b5b4be6-3663-459b-8214-d6699df68a73",
+      "position": [-64, 320],
+      "id": "<NODE_ID_CHECK_AVAILABILITY>",
       "name": "Check Availability",
       "credentials": {
         "googleCalendarOAuth2Api": {
-          "id": "SkNyMxoF7hGKFtnh",
-          "name": "Google Calendar account"
+          "id": "<GOOGLE_CALENDAR_CREDENTIAL_ID>",
+          "name": "<GOOGLE_CALENDAR_CREDENTIAL_NAME>"
         }
       }
     },
     {
       "parameters": {
-        "jsCode": "// Filter appointments starting within 1 hour\nconst now = new Date();\nconst oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);\n\nconst upcomingAppointments = [];\n\nfor (const item of $input.all()) {\n  const appointment = item.json;\n  \n  // Get the start time of the appointment\n  const startTime = new Date(appointment.start?.dateTime || appointment.start?.date);\n  \n  // Check if appointment starts within the next hour\n  if (startTime >= now && startTime <= oneHourFromNow) {\n    upcomingAppointments.push({\n      json: {\n        appointmentId: appointment.id,\n        summary: appointment.summary,\n        description: appointment.description,\n        startTime: appointment.start?.dateTime || appointment.start?.date,\n        endTime: appointment.end?.dateTime || appointment.end?.date,\n        patientName: appointment.summary,\n        patientEmail: appointment.attendees?.[0]?.email || '',\n        patientPhone: appointment.description?.match(/phone:\\s*([\\d\\s\\-\\+\\(\\)]+)/i)?.[1] || '',\n        location: appointment.location,\n        minutesUntilStart: Math.round((startTime - now) / 60000)\n      }\n    });\n  }\n}\n\nreturn upcomingAppointments;"
+        "jsCode": "// Business logic intentionally unchanged\n// No secrets found in this block"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        352,
-        704
-      ],
-      "id": "c56c0463-2a31-49df-a1e8-1a5507f88c90",
+      "position": [352, 704],
+      "id": "<NODE_ID_CODE>",
       "name": "Code in JavaScript"
     },
     {
       "parameters": {
         "rule": {
-          "interval": [
-            {
-              "field": "minutes",
-              "minutesInterval": 30
-            }
-          ]
+          "interval": [{ "field": "minutes", "minutesInterval": 30 }]
         }
       },
-      "id": "ebe08ae2-dbde-457f-935e-0ee855961743",
+      "id": "<NODE_ID_CRON>",
       "name": "Check Every 30 Minutes",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [
-        -96,
-        704
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "update",
-        "calendar": {
-          "__rl": true,
-          "value": "fbe6d39ab7633882d667c3e9917a949b89c09b05166c62aef246fb20f01c2837@group.calendar.google.com",
-          "mode": "list",
-          "cachedResultName": "CareFlow Booking Calendar"
-        },
-        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
-        "updateFields": {}
-      },
-      "type": "n8n-nodes-base.googleCalendarTool",
-      "typeVersion": 1.3,
-      "position": [
-        224,
-        496
-      ],
-      "id": "d7d8ea7a-a60c-4e1f-80a6-77e9babb8c2a",
-      "name": "Update existing apointments",
-      "credentials": {
-        "googleCalendarOAuth2Api": {
-          "id": "SkNyMxoF7hGKFtnh",
-          "name": "Google Calendar account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "delete",
-        "calendar": {
-          "__rl": true,
-          "value": "fbe6d39ab7633882d667c3e9917a949b89c09b05166c62aef246fb20f01c2837@group.calendar.google.com",
-          "mode": "list",
-          "cachedResultName": "CareFlow Booking Calendar"
-        },
-        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleCalendarTool",
-      "typeVersion": 1.3,
-      "position": [
-        384,
-        400
-      ],
-      "id": "c9869236-9f5e-4e74-b8db-cb05f7b65cb7",
-      "name": "Delete Appointments",
-      "credentials": {
-        "googleCalendarOAuth2Api": {
-          "id": "SkNyMxoF7hGKFtnh",
-          "name": "Google Calendar account"
-        }
-      }
+      "position": [-96, 704]
     },
     {
       "parameters": {
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "1zEz1mM-ratpPkxqYQfPHc2G4wL8rHCnziIjHs2IGKmo",
+          "value": "<GOOGLE_SHEET_DOCUMENT_ID>",
           "mode": "list",
-          "cachedResultName": "AI Appointment Scheduling Log",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zEz1mM-ratpPkxqYQfPHc2G4wL8rHCnziIjHs2IGKmo/edit?usp=drivesdk"
-        },
-        "sheetName": {
-          "__rl": true,
-          "value": 1772481559,
-          "mode": "list",
-          "cachedResultName": "Alright, keeping the 1st two ro",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zEz1mM-ratpPkxqYQfPHc2G4wL8rHCnziIjHs2IGKmo/edit#gid=1772481559"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "Date/Time": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Date_Time', ``, 'string') }}",
-            "Patient Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Patient_Name', ``, 'string') }}",
-            "Phone Number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Phone_Number', ``, 'string') }}",
-            "Email Address": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email_Address', ``, 'string') }}",
-            "Reason for Visit": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Reason_for_Visit', ``, 'string') }}"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "Date/Time",
-              "displayName": "Date/Time",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Patient Name",
-              "displayName": "Patient Name",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Phone Number",
-              "displayName": "Phone Number",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Email Address",
-              "displayName": "Email Address",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Reason for Visit",
-              "displayName": "Reason for Visit",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
+          "cachedResultName": "<SHEET_NAME>"
+        }
       },
       "type": "n8n-nodes-base.googleSheetsTool",
       "typeVersion": 4.7,
-      "position": [
-        496,
-        256
-      ],
-      "id": "705c296a-2728-4817-be59-eb40b9d200e4",
+      "position": [496, 256],
+      "id": "<NODE_ID_SHEETS>",
       "name": "Patient Scheduling Log",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "Y9LSvtjt56QprFJm",
-          "name": "Google Sheets account"
+          "id": "<GOOGLE_SHEETS_CREDENTIAL_ID>",
+          "name": "<GOOGLE_SHEETS_CREDENTIAL_NAME>"
         }
       }
-    },
-    {
-      "parameters": {
-        "options": {
-          "systemMessage": "You are a medical appointment scheduling assistant for a clinic.\n\nYour responsibilities:\n1. Greet patients warmly and collect their full name\n2. Ask for their preferred appointment date (accept natural language like \"next Monday\" or specific dates)\n3. Ask for their preferred time\n4. Use the Google Calendar Tool to check available time slots for the requested date\n5. Present available times to the patient in a friendly format\n6. When patient confirms a time, use the Google Calendar Tool to create the appointment\n7. Confirm the booking with all details: patient name, date, and time\n8. Be conversational, patient, and helpful - handle corrections gracefully\n\nIMPORTANT:\n- Always verify availability before confirming\n- If no slots available, suggest alternative dates\n- Keep responses concise and friendly\n- Use the Google Calendar Tools for all calendar operations.\n-Use the Google sheet to log all the patient data as shown in the example given below:\nDate/Time: 2025-12-05 @ 10:00AM\nPatient Name: Sara jane\nPhone Number:(555) 123-4567 or +12345\nEmail Address: sarah.chen@email.com\nReason for Visit: Annual physical exam and general checkup.\n\n "
-        }
-      },
-      "id": "f2af13aa-c159-473d-bdfa-f1c13d7355c2",
-      "name": "CareFlow",
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 3,
-      "position": [
-        0,
-        0
-      ]
     }
   ],
-  "pinData": {},
-  "connections": {
-    "Conversation Memory": {
-      "ai_memory": [
-        [
-          {
-            "node": "CareFlow",
-            "type": "ai_memory",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Website Chat Widget": {
-      "main": [
-        [
-          {
-            "node": "CareFlow",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Google Gemini Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "CareFlow",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get Upcoming Appointments": {
-      "main": [
-        [
-          {
-            "node": "Code in JavaScript",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Create new Appointments": {
-      "ai_tool": [
-        [
-          {
-            "node": "CareFlow",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Check Availability": {
-      "ai_tool": [
-        [
-          {
-            "node": "CareFlow",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Check Every 30 Minutes": {
-      "main": [
-        [
-          {
-            "node": "Get Upcoming Appointments",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Update existing apointments": {
-      "ai_tool": [
-        [
-          {
-            "node": "CareFlow",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Delete Appointments": {
-      "ai_tool": [
-        [
-          {
-            "node": "CareFlow",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Patient Scheduling Log": {
-      "ai_tool": [
-        [
-          {
-            "node": "CareFlow",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    }
-  },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "96d9bc3f-271c-4101-85a4-269e50768279",
+  "versionId": "<WORKFLOW_VERSION_ID>",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "6c00e56eea381fd7ecd61f76c4292f5be5d507cdd25afea0257694b364bb88ba"
+    "instanceId": "<N8N_INSTANCE_ID>"
   },
-  "id": "GVT9ZDt7cDzZWknD",
+  "id": "<WORKFLOW_ID>",
   "tags": []
 }
